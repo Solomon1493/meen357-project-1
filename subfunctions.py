@@ -1,7 +1,10 @@
 def tau_dcmotor():
     
 def get_gear_ratio():
-    
+    pinion_d = speed_reducer["diam_pinion"]
+    gear_d = speed_reducer["diam_gear"]
+    ratio = (gear_d/pinion_d)**2
+    return ratio
 def get_mass():
     mass_wheel = wheel_assembly["wheel"]["mass"] + wheel_assembly["speed_reducer"]["mass"] + wheel_assembly["motor"]["mass"]
     mass_chassis = chassis["mass"]
