@@ -14,11 +14,10 @@ o motor power [W] vs. motor shaft speed [rad/s] (use speed on the x-axis)
 matplotlib.pyplot.xlabel and matplotlib.pyplot.ylabel commands.
 • Use the functions you created to generate the graphs
 '''
-motor = {
-    'torque_stall': 170,     
-    'torque_noload': 0,      
-    'speed_noload': 3.80,    
-    'mass': 5.0              
-}
 
+rover = define_rover()
+print(rover)
+motor = rover["wheel_assembly"]["motor"]
+
+tau = tau_dcmotor(omega_array, motor)
 
