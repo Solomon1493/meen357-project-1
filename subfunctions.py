@@ -33,9 +33,14 @@ def tau_dcmotor(wheel_assembly, speed):
     torque_stall =  wheel_assembly["motor"]["torque_stall"]
     torque_noload = wheel_assembly["motor"]["torque_noload"]
     speed_noload = wheel_assembly["motor"]["speed_noload"]
-    return tau_dcmotor
+    current_speed = speed
 
-tau_dcmotor(rover['wheel_assembly'], 10)
+    tau = torque_stall - (((torque_stall - torque_noload)/speed_noload) * current_speed)
+    
+    return tau
+
+tau = tau_dcmotor(rover['wheel_assembly'], 10) #speed example of 10
+print(tau)
 
 def get_gear_ratio(speed_reducer):
     pinion_d = speed_reducer["diam_pinion"]
