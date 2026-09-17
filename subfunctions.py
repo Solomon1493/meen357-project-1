@@ -54,10 +54,6 @@ def get_mass(wheel_assembly, chassis, science_payload, power_subsys):
     mass_rover = mass_wheel + mass_chassis + mass_science_payload + mass_power_subsys
     return mass_rover
 
-
-mass_rover = get_mass(rover['wheel_assembly'], rover['chassis'], rover['science_payload'], rover['power_subsys'])
-print(mass_rover)
-
 def F_rolling(omega, terrain_angle, rover, planet, Crr):
     frr_array = []
     for x in range(len(terrain_angle)):
