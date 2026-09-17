@@ -4,6 +4,7 @@ import numpy as np
 
 
 rover = define_rover()
+ratio = get_gear_ratio()
 
 print(get_gear_ratio())
 

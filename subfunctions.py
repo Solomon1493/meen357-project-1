@@ -30,7 +30,7 @@ def define_planet():
 def tau_dcmotor():
     return tau_dcmotor
 
-def get_gear_ratio():
+def get_gear_ratio(speed_reducer):
     pinion_d = speed_reducer["diam_pinion"]
     gear_d = speed_reducer["diam_gear"]
     ratio = (gear_d/pinion_d)**2
@@ -43,7 +43,6 @@ def get_mass():
     mass_power_subsys = power_subsys["mass"]
     mass_rover = mass_wheel + mass_chassis + mass_science_payload + mass_power_subsys
     return mass_rover
-
 
 def F_rolling():
     return F_rolling
