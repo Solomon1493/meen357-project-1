@@ -27,7 +27,10 @@ def define_rover():
 def define_planet():
     return {'g': 3.72}
 
-def tau_dcmotor():
+def tau_dcmotor(wheel_assembly, speed):
+    torque_stall =  wheel_assembly["motor"]["torque_stall"]
+    torque_noload = wheel_assembly["motor"]["torque_noload"]
+    speed_noload = wheel_assembly["motor"]["speed_noload"]
     return tau_dcmotor
 
 def get_gear_ratio(wheel_assembly):
