@@ -24,8 +24,6 @@ def define_rover():
     }
     return rover
 
-rover = define_rover()
-
 def define_planet():
     return {'g': 3.72}
 
@@ -35,6 +33,7 @@ def tau_dcmotor(wheel_assembly, speed):
     speed_noload = wheel_assembly["motor"]["speed_noload"]
     current_speed = speed
 
+<<<<<<< HEAD
     tau = torque_stall - (((torque_stall - torque_noload)/speed_noload) * current_speed)
     
     return tau
@@ -45,6 +44,11 @@ print(tau)
 def get_gear_ratio(speed_reducer):
     pinion_d = speed_reducer["diam_pinion"]
     gear_d = speed_reducer["diam_gear"]
+=======
+def get_gear_ratio(wheel_assembly):
+    pinion_d = wheel_assembly['speed_reducer']["diam_pinion"]
+    gear_d =  wheel_assembly['speed_reducer']["diam_gear"]
+>>>>>>> d89e2e303c29bafa0ca92abbc70983b444c14b10
     ratio = (gear_d/pinion_d)**2
     return ratio
 
@@ -64,9 +68,3 @@ def F_drive():
     return F_drive
 def F_net():
     return F_net
-
-roverspecs = define_rover()
-print(roverspecs)
-
-mass_rover = get_mass(roverspecs['wheel_assembly'], roverspecs['chassis'], roverspecs['science_payload'], roverspecs['power_subsys'])
-print(mass_rover)
