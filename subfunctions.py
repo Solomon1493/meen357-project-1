@@ -36,7 +36,7 @@ def get_gear_ratio(speed_reducer):
     ratio = (gear_d/pinion_d)**2
     return ratio
 
-def get_mass():
+def get_mass(wheel_assembly, chassis, science_payload, power_subsys):
     mass_wheel = wheel_assembly["wheel"]["mass"] + wheel_assembly["speed_reducer"]["mass"] + wheel_assembly["motor"]["mass"]
     mass_chassis = chassis["mass"]
     mass_science_payload = science_payload["mass"]
@@ -52,3 +52,9 @@ def F_drive():
     return F_drive
 def F_net():
     return F_net
+
+roverspecs = define_rover()
+print(roverspecs)
+
+mass_rover = get_mass(roverspecs['wheel_assembly'], roverspecs['chassis'], roverspecs['science_payload'], roverspecs['power_subsys'])
+print(mass_rover)
