@@ -24,11 +24,18 @@ def define_rover():
     }
     return rover
 
+rover = define_rover()
+
 def define_planet():
     return {'g': 3.72}
 
-def tau_dcmotor():
+def tau_dcmotor(wheel_assembly, speed):
+    torque_stall =  wheel_assembly["motor"]["torque_stall"]
+    torque_noload = wheel_assembly["motor"]["torque_noload"]
+    speed_noload = wheel_assembly["motor"]["speed_noload"]
     return tau_dcmotor
+
+tau_dcmotor(rover['wheel_assembly'], 10)
 
 def get_gear_ratio(speed_reducer):
     pinion_d = speed_reducer["diam_pinion"]
