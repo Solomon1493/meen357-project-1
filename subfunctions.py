@@ -1,26 +1,3 @@
-def tau_dcmotor():
-    
-def get_gear_ratio():
-    pinion_d = speed_reducer["diam_pinion"]
-    gear_d = speed_reducer["diam_gear"]
-    ratio = (gear_d/pinion_d)**2
-    return ratio
-def get_mass():
-    mass_wheel = wheel_assembly["wheel"]["mass"] + wheel_assembly["speed_reducer"]["mass"] + wheel_assembly["motor"]["mass"]
-    mass_chassis = chassis["mass"]
-    mass_science_payload = science_payload["mass"]
-    mass_power_subsys = power_subsys["mass"]
-    mass_rover = mass_wheel + mass_chassis + mass_science_payload + mass_power_subsys
-    return mass_rover
-def F_rolling():
-    
-def F_gravity():
-    
-def F_drive():
-    
-def F_net():
-    
-
 def define_rover():
     rover = {
         'wheel_assembly': {
@@ -49,3 +26,32 @@ def define_rover():
 
 def define_planet():
     return {'g': 3.72}
+
+def tau_dcmotor():
+    return tau_dcmotor
+
+def get_gear_ratio():
+    pinion_d = speed_reducer["diam_pinion"]
+    gear_d = speed_reducer["diam_gear"]
+    ratio = (gear_d/pinion_d)**2
+    return ratio
+
+def get_mass():
+    mass_wheel = wheel_assembly["wheel"]["mass"] + wheel_assembly["speed_reducer"]["mass"] + wheel_assembly["motor"]["mass"]
+    mass_chassis = chassis["mass"]
+    mass_science_payload = science_payload["mass"]
+    mass_power_subsys = power_subsys["mass"]
+    mass_rover = mass_wheel + mass_chassis + mass_science_payload + mass_power_subsys
+    return mass_rover
+
+
+def F_rolling():
+    return F_rolling
+def F_gravity():
+    return F_gravity
+def F_drive():
+    return F_drive
+def F_net():
+    return F_net
+
+
