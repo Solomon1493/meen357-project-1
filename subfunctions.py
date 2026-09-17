@@ -87,6 +87,12 @@ planet = {"g": 9.81}
 
 print(F_rolling([1,2,3],[-10,60,75], rover, planet, 3))
 
+        frr_array = frr_array.append(frr)
+    return frr_array
+
+#planet = {"g": 9.81}
+#print(F_rolling([1,2,3],[30,60,90], rover, planet, 3))
+
 def F_gravity():
     return F_gravity
 def F_drive():
