@@ -54,6 +54,10 @@ def get_mass(wheel_assembly, chassis, science_payload, power_subsys):
     mass_rover = mass_wheel + mass_chassis + mass_science_payload + mass_power_subsys
     return mass_rover
 
+
+mass_rover = get_mass(rover['wheel_assembly'], rover['chassis'], rover['science_payload'], rover['power_subsys'])
+print(mass_rover)
+
 def F_rolling(omega, terrain_angle, rover, planet, Crr):
     frr_array = []
     for x in range(len(terrain_angle)):
@@ -62,8 +66,10 @@ def F_rolling(omega, terrain_angle, rover, planet, Crr):
         frr = math.erf(40*omega[x])*frr_simple
         frr_array = frr_array.append(frr)
     return frr_array
-planet = {"g": 9.81}
-print(F_rolling([1,2,3],[30,60,90], rover, planet, 3))
+
+#planet = {"g": 9.81}
+#print(F_rolling([1,2,3],[30,60,90], rover, planet, 3))
+
 def F_gravity():
     return F_gravity
 def F_drive():
