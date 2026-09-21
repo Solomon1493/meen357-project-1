@@ -147,53 +147,73 @@ def F_gravity(terrain_angle, rover, planet):
     return Fgt
 
 def F_drive(omega, rover):
-    #make sure omega is a 1d array
-    if not (np.isscalar(omega) or np.ndim(omega) <= 1):
-        raise Exception("Omega must be a scalar or vector")
+    # #make sure omega is a 1d array
+    # if not (np.isscalar(omega) or np.ndim(omega) <= 1):
+    #     raise Exception("Omega must be a scalar or vector")
     
-    #check omega for invalid data types
-    omega_check = np.atleast_1d(omega)
-    for element in omega_check:
-        #check if not an integer or float
-        if isinstance(element, (str, bool)) or not isinstance(element, (int, float, np.number)):
-            raise Exception("Omega must contain only numeric scalar or vector values")
+    # #check omega for invalid data types
+    # omega_check = np.atleast_1d(omega)
+    # for element in omega_check:
+    #     #check if not an integer or float
+    #     if isinstance(element, (str, bool)) or not isinstance(element, (int, float, np.number)):
+    #         raise Exception("Omega must contain only numeric scalar or vector values")
     
-    #check if omega is empty
-    if len(omega_check) == 0:
-        raise Exception("Omega vector cannot be empty")
+    # #check if omega is empty
+    # if len(omega_check) == 0:
+    #     raise Exception("Omega vector cannot be empty")
         
-    #make sure rover is a dictionary
-    if not isinstance(rover, dict):
-        raise Exception("Rover must be a dictionary")
+    # #make sure rover is a dictionary
+    # if not isinstance(rover, dict):
+    #     raise Exception("Rover must be a dictionary")
    
-    try:
-        if "wheel_assembly" not in rover:
-            raise Exception("Rover dictionary is missing 'wheel_assembly'")
-        wa = rover["wheel_assembly"]
-        if not isinstance(wa, dict) or "speed_reducer" not in wa or "motor" not in wa or "wheel" not in wa:
-            raise Exception("Invalid 'wheel_assembly' structure")
+    # try:
+    #     if "wheel_assembly" not in rover:
+    #         raise Exception("Rover dictionary is missing 'wheel_assembly'")
+    #     wa = rover["wheel_assembly"]
+    #     if not isinstance(wa, dict) or "speed_reducer" not in wa or "motor" not in wa or "wheel" not in wa:
+    #         raise Exception("Invalid 'wheel_assembly' structure")
             
-        if "type" not in wa["speed_reducer"] or "diam_pinion" not in wa["speed_reducer"] or "diam_gear" not in wa["speed_reducer"]:
-            raise Exception("Invalid 'speed_reducer' structure")
+    #     if "type" not in wa["speed_reducer"] or "diam_pinion" not in wa["speed_reducer"] or "diam_gear" not in wa["speed_reducer"]:
+    #         raise Exception("Invalid 'speed_reducer' structure")
             
-        if "radius" not in wa["wheel"]:
-            raise Exception("Invalid 'wheel' structure")
+    #     if "radius" not in wa["wheel"]:
+    #         raise Exception("Invalid 'wheel' structure")
             
-    except Exception as e:
-        #backup failure method
-        raise Exception(f"Invalid rover structure: {str(e)}")
+    # except Exception as e:
+    #     #backup failure method
+    #     raise Exception(f"Invalid rover structure: {str(e)}")
     
+    omega_type_check = False
+    if isinstance(omega, np.ndarray) and omega.ndim == 1:
+        omega_type_check = True
+    if np.isscalar(omega):
+        omega_type_check = True
+    
+    if omega_type_check == False:
+        raise Exception("Omega must be scalar or vector")
+        
+    if isinstance(rover, dict) == False:
+        raise Exception("Rover must be a dictionary")
+    
+    
+    motor = rover["wheel_assembly"]["motor"]
+    sr = rover["wheel_assembly"]["speed_reducer"]
+    wheel = rover["wheel_assembly"]["wheel"]
+    
+    tau = tau_dcmotor(omega, motor)
+    
+    Ng = get_gear_ratio(sr)
     #get gear ratio
-    gear_ratio = get_gear_ratio(rover['wheel_assembly']['speed_reducer'])
-    tau_motor = tau_dcmotor(omega, rover['wheel_assembly']['motor'])
+    #gear_ratio = get_gear_ratio(rover['wheel_assembly']['speed_reducer'])
+    #tau_motor = tau_dcmotor(omega, rover['wheel_assembly']['motor'])
     
     #Torque after speed reducer
-    tau_out = gear_ratio * tau_motor
+    #tau_out = gear_ratio * tau_motor
     
     #wheel radius
-    wheel_radius = rover['wheel_assembly']['wheel']['radius']
+    #wheel_radius = rover['wheel_assembly']['wheel']['radius']
 
-    Fd = 6 * tau_out / wheel_radius
+    Fd = 6 * Ng * tau / wheel["radius"]
 
     return Fd
 
