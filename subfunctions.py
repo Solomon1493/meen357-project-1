@@ -32,6 +32,8 @@ rover = define_rover()
 def define_planet():
     return {'g': 3.72}
 
+planet = define_planet()
+
 def tau_dcmotor(omega, motor):
     if not (np.isscalar(omega) or np.ndim(omega) <= 1):
         raise Exception("Omega must be a scalar or vector")
@@ -41,17 +43,21 @@ def tau_dcmotor(omega, motor):
     torque_stall = motor["torque_stall"]
     torque_noload = motor["torque_noload"]
     speed_noload = motor["speed_noload"]
-    
-    tau = np.zeros(len(omega))
 
-    for i in range(len(omega)):
-        if omega[i] > speed_noload:
-            tau[i] = 0
-        elif omega[i] < 0:
+    is_scalar = np.isscalar(omega)
+    omega_arr = np.atleast_1d(omega)
+    
+    tau = np.zeros(len(omega_arr))
+
+    for i in range(len(omega_arr)):
+        if omega_arr[i] > speed_noload:
+            tau[i] = 0.0
+        elif omega_arr[i] < 0:
             tau[i] = torque_stall
         else:
-            tau[i] = torque_stall - (((torque_stall - torque_noload) / speed_noload) * omega[i])
-    return tau
+            tau[i] = torque_stall - ((torque_stall - torque_noload) / speed_noload) * omega_arr[i]
+
+    return tau[0] if is_scalar else tau
 
 def get_gear_ratio(speed_reducer):
     if not isinstance(speed_reducer, dict):
@@ -110,7 +116,7 @@ def F_rolling(omega, terrain_angle, rover, planet, Crr):
         v_rover = wheel_radius * omega_wheel
         
         #calculate normal force
-        Fn = mass_rover * planet["g"] * math.cos(terrain_angle[x])
+        Fn = mass_rover * planet["g"] * math.cos(np.radians(terrain_angle[x]))
         
         #rolling resis
         Frr[x] = -Crr * Fn *math.erf(40 * v_rover)
@@ -132,12 +138,35 @@ def F_gravity(terrain_angle, rover, planet):
     Fgt = np.zeros(len(terrain_angle))
 
     for x in range(len(Fgt)):
-        Fgt[x] = mass_rover * planet["g"] * math.sin(math.degrees(terrain_angle[x]))
+        Fgt[x] = mass_rover * -planet["g"] * math.sin(np.radians(terrain_angle[x]))
 
     return Fgt
 
-def F_drive():
-    return F_drive
+print(F_gravity([-75, 0, 75], rover, planet))
+
+def F_drive(omega, rover):
+    if not (np.isscalar(omega) or np.ndim(omega) <= 1):
+        raise Exception("Omega must be a scalar or vector")
+    if not isinstance(rover, dict):
+        raise Exception("Rover must be a dictionary")
+
+    gear_ratio = get_gear_ratio(rover['wheel_assembly']['speed_reducer'])
+
+    Fd = np.zeros(len(omega))
+
+    omega_wheel = np.zeros(len(omega))
+
+
+    for x in range(len(omega_wheel)):
+        omega_wheel[x] = omega[x] / gear_ratio
+
+    for x in range(len(Fd)):
+        tau = tau_dcmotor(omega_wheel[x], rover['wheel_assembly']['motor'])
+        Fd[x] = tau / rover['wheel_assembly']['wheel']['radius']
+        
+    return Fd
+
+print(F_drive([10, 20, 30], rover))
 
 def F_net(omega, terrain_angle, rover, planet, Crr):
     omega = np.atleast_1d(omega)
@@ -164,5 +193,5 @@ def F_net(omega, terrain_angle, rover, planet, Crr):
     Fg = F_gravity(terrain_angle, rover, planet)
     Frr = F_rolling(omega, terrain_angle, rover, planet, Crr)
     
-    F_et = Fd + Fg + Frr
+    Fnet = Fd + Fg + Frr
     return Fnet
