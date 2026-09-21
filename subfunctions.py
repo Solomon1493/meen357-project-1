@@ -32,35 +32,52 @@ rover = define_rover()
 def define_planet():
     return {'g': 3.72}
 
-def tau_dcmotor(wheel_assembly, speed):
-    torque_stall =  wheel_assembly["motor"]["torque_stall"]
-    torque_noload = wheel_assembly["motor"]["torque_noload"]
-    speed_noload = wheel_assembly["motor"]["speed_noload"]
-    current_speed = speed
+def tau_dcmotor(omega, motor):
+    if not (np.isscalar(omega) or np.ndim(omega) <= 1):
+        raise Exception("Omega must be a scalar or vector")
+    if not isinstance(motor, dict):
+        raise Exception("Motor must be a dictionary")
 
-    tau = torque_stall - (((torque_stall - torque_noload)/speed_noload) * current_speed)
+    torque_stall = motor["torque_stall"]
+    torque_noload = motor["torque_noload"]
+    speed_noload = motor["speed_noload"]
     
+    tau = np.zeros(len(omega))
+
+    for i in range(len(omega)):
+        if omega[i] > speed_noload:
+            tau[i] = 0
+        elif omega[i] < 0:
+            tau[i] = torque_stall
+        else:
+            tau[i] = torque_stall - (((torque_stall - torque_noload) / speed_noload) * omega[i])
     return tau
 
 def get_gear_ratio(speed_reducer):
+    if not isinstance(speed_reducer, dict):
+        raise Exception("Speed reducer must be a dictionary")
+
+    reducer_type = speed_reducer.get("type", "").lower()
+    if reducer_type != "reverted":
+        raise Exception(f"Invalid speed reducer type: '{reducer_type}'. Only 'reverted' gear sets are supported.")
+
     pinion_d = speed_reducer["diam_pinion"]
     gear_d = speed_reducer["diam_gear"]
-    ratio = (gear_d/pinion_d)**2
-    return ratio
+    Ng = (gear_d/pinion_d)**2
+    return Ng
 
-def get_mass(wheel_assembly, chassis, science_payload, power_subsys):
-    mass_wheel = wheel_assembly["wheel"]["mass"] + wheel_assembly["speed_reducer"]["mass"] + wheel_assembly["motor"]["mass"]
-    mass_chassis = chassis["mass"]
-    mass_science_payload = science_payload["mass"]
-    mass_power_subsys = power_subsys["mass"]
-    mass_rover = mass_wheel + mass_chassis + mass_science_payload + mass_power_subsys
-    return mass_rover
-
+def get_mass(rover):
+    if not isinstance(rover, dict):
+        raise Exception("Rover must be a dictionary")
+    
+    mass_wheel = rover['wheel_assembly']['wheel']['mass'] + rover['wheel_assembly']['speed_reducer']['mass'] + rover['wheel_assembly']['motor']['mass']
+    mass_chassis = rover['chassis']['mass']
+    mass_science_payload = rover['science_payload']['mass']
+    mass_power_subsys = rover['power_subsys']['mass']
+    m = mass_wheel + mass_chassis + mass_science_payload + mass_power_subsys
+    return m
 
 def F_rolling(omega, terrain_angle, rover, planet, Crr):
-    mass_rover = get_mass(rover['wheel_assembly'], rover['chassis'], rover['science_payload'], rover['power_subsys'])
-    gear_ratio = get_gear_ratio(rover['wheel_assembly']['speed_reducer'])
-
     if len(omega) != len(terrain_angle):
         raise Exception("Omega and terrain angle must have the same length")
 
@@ -73,25 +90,17 @@ def F_rolling(omega, terrain_angle, rover, planet, Crr):
     if not (np.isscalar(Crr) or Crr >= 0):
         raise Exception("Crr must be a scalar and greater than or equal to 0")
 
-    frr = np.zeros(len(terrain_angle))
+    mass_rover = get_mass(rover)
+    gear_ratio = get_gear_ratio(rover['wheel_assembly']['speed_reducer'])
 
-    for x in range(len(frr)):
-        degree_result = math.cos(math.radians(terrain_angle[x]))
-        frr_simple = Crr*mass_rover*planet["g"]*degree_result
-        frr = math.erf(40*omega[x])*frr_simple
-        frr
-    return frr
+    Frr = np.zeros(len(terrain_angle))
 
+    for x in range(len(Frr)):
+        Frr[x] = Crr * mass_rover * planet["g"] * math.cos(math.radians(terrain_angle[x]))
+        Frr[x] = Frr[x] * math.erf(40*omega[x])
+    
+    return Frr
 
-planet = {"g": 9.81}
-
-print(F_rolling([1,2,3],[-10,60,75], rover, planet, 3))
-
-        frr_array = frr_array.append(frr)
-    return frr_array
-
-#planet = {"g": 9.81}
-#print(F_rolling([1,2,3],[30,60,90], rover, planet, 3))
 
 def F_gravity():
     return F_gravity
