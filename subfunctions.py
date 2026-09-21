@@ -136,8 +136,25 @@ def F_gravity(terrain_angle, rover, planet):
 
     return Fgt
 
-def F_drive():
+def F_drive(omega, rover):
+    if not np.isscalar(omega) and not isinstance(omega, np.ndarray):
+        raise Exception('omega must be a scalar or a numpy array.')
+
+    if not isinstance(rover, dict):
+        raise Exception('rover must be a dictionary.')
+
+    omega = np.asarray(omega)
+
+    tau = tau_dcmotor(omega, rover['wheel_assembly']['motor'])
+    Ng = get_gear_ratio(rover['wheel_assembly']['speed_reducer'])
+    r = rover['wheel_assembly']['wheel']['radius']
+
+    tau_wheel = tau * Ng
+    F_wheel = tau_wheel / r
+    F_drive = 6 * F_wheel
+
     return F_drive
+
 
 def F_net(omega, terrain_angle, rover, planet, Crr):
     omega = np.atleast_1d(omega)
