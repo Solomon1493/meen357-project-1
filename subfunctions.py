@@ -149,6 +149,8 @@ def F_drive(omega, rover):
         raise Exception("Omega must be a scalar or vector")
     if not isinstance(rover, dict):
         raise Exception("Rover must be a dictionary")
+    if isinstance(omega, str):
+        raise Exception("Omega must be a scalar or vector")
 
     gear_ratio = get_gear_ratio(rover['wheel_assembly']['speed_reducer'])
     tau_motor = tau_dcmotor(omega, rover['wheel_assembly']['motor'])
@@ -158,8 +160,6 @@ def F_drive(omega, rover):
     Fd = 6 * tau_out / wheel_radius
 
     return Fd
-
-print(F_drive([10, 20, 30], rover))
 
 def F_net(omega, terrain_angle, rover, planet, Crr):
     omega = np.atleast_1d(omega)
