@@ -151,19 +151,12 @@ def F_drive(omega, rover):
         raise Exception("Rover must be a dictionary")
 
     gear_ratio = get_gear_ratio(rover['wheel_assembly']['speed_reducer'])
+    tau_motor = tau_dcmotor(omega, rover['wheel_assembly']['motor'])
+    tau_out = gear_ratio * tau_motor
+    wheel_radius = rover['wheel_assembly']['wheel']['radius']
 
-    Fd = np.zeros(len(omega))
+    Fd = 6 * tau_out / wheel_radius
 
-    omega_wheel = np.zeros(len(omega))
-
-
-    for x in range(len(omega_wheel)):
-        omega_wheel[x] = omega[x] / gear_ratio
-
-    for x in range(len(Fd)):
-        tau = tau_dcmotor(omega_wheel[x], rover['wheel_assembly']['motor'])
-        Fd[x] = tau / rover['wheel_assembly']['wheel']['radius']
-        
     return Fd
 
 print(F_drive([10, 20, 30], rover))
