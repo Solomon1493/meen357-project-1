@@ -110,7 +110,7 @@ def F_rolling(omega, terrain_angle, rover, planet, Crr):
         v_rover = wheel_radius * omega_wheel
         
         #calculate normal force
-        Fn = mass_rover * planet["g"] * math.cos(math.radian(terrain_angle[x]))
+        Fn = mass_rover * planet["g"] * math.cos(terrain_angle[x])
         
         #rolling resis
         Frr[x] = -Crr * Fn *math.erf(40 * v_rover)
@@ -119,8 +119,8 @@ def F_rolling(omega, terrain_angle, rover, planet, Crr):
     return Frr
 
 def F_gravity(terrain_angle, rover, planet):
-    if len(terrain_angle) != len(rover) or len(terrain_angle) != len(planet):
-        raise Exception("Terrain angle, rover, and planet must have the same length")
+     if not (np.isscalar(terrain_angle) or np.ndim(terrain_angle) <= 1):
+        raise Exception("Terrain angle must be a scalar or vector")
 
     if not isinstance(rover, dict) or not isinstance(planet, dict):
         raise Exception("Rover and planet must be a dictionary")
@@ -136,30 +136,18 @@ def F_gravity(terrain_angle, rover, planet):
 
     return Fgt
 
-def F_drive(omega, rover):
-    if not np.isscalar(omega) and not isinstance(omega, np.ndarray):
-        raise Exception('omega must be a scalar or a numpy array.')
-
-    if not isinstance(rover, dict):
-        raise Exception('rover must be a dictionary.')
-
-    omega = np.asarray(omega)
-
-    tau = tau_dcmotor(omega, rover['wheel_assembly']['motor'])
-    Ng = get_gear_ratio(rover['wheel_assembly']['speed_reducer'])
-    r = rover['wheel_assembly']['wheel']['radius']
-
-    tau_wheel = tau * Ng
-    F_wheel = tau_wheel / r
-    F_drive = 6 * F_wheel
-
+def F_drive():
     return F_drive
-
 
 def F_net(omega, terrain_angle, rover, planet, Crr):
     omega = np.atleast_1d(omega)
     terrain_angle = np.atleast_1d(terrain_angle)
-    
+
+    if not (np.isscalar(omega) or np.ndim(omega) <= 1):
+        raise Exception("Omega must be a scalar or vector")
+    if not (np.isscalar(terrain_angle) or np.ndim(terrain_angle) <= 1):
+        raise Exception("Terrain angle must be a scalar or vector")
+        
     if len(omega) != len(terrain_angle):
         raise Exception("Omega and terrain angle must have the same length")
         
@@ -176,5 +164,5 @@ def F_net(omega, terrain_angle, rover, planet, Crr):
     Fg = F_gravity(terrain_angle, rover, planet)
     Frr = F_rolling(omega, terrain_angle, rover, planet, Crr)
     
-    F_net = Fd + Fg + Frr
-    return F_net
+    F_et = Fd + Fg + Frr
+    return Fnet
