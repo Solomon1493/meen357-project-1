@@ -142,8 +142,6 @@ def F_gravity(terrain_angle, rover, planet):
 
     return Fgt
 
-print(F_gravity([-75, 0, 75], rover, planet))
-
 def F_drive(omega, rover):
     if not (np.isscalar(omega) or np.ndim(omega) <= 1):
         raise Exception("Omega must be a scalar or vector")
