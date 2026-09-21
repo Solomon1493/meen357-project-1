@@ -96,14 +96,32 @@ def F_rolling(omega, terrain_angle, rover, planet, Crr):
     Frr = np.zeros(len(terrain_angle))
 
     for x in range(len(Frr)):
-        Frr[x] = Crr * mass_rover * planet["g"] * math.cos(math.radians(terrain_angle[x]))
+        Frr[x] = Crr * mass_rover * planet["g"] * math.cos(math.degrees(terrain_angle[x]))
         Frr[x] = Frr[x] * math.erf(40*omega[x])
     
     return Frr
 
+def F_gravity(terrain_angle, rover, planet):
+    if len(terrain_angle) != len(rover) or len(terrain_angle) != len(planet):
+        raise Exception("Terrain angle, rover, and planet must have the same length")
 
-def F_gravity():
-    return F_gravity
+    if not isinstance(rover, dict) or not isinstance(planet, dict):
+        raise Exception("Rover and planet must be a dictionary")
+
+    if any(angle > 75 or angle < -75 for angle in terrain_angle):
+        raise Exception("Slope angle must be between -75 and 75 degrees")
+
+    mass_rover = get_mass(rover)
+    Fgt = np.zeros(len(terrain_angle))
+
+    for x in range(len(Fgt)):
+        Fgt[x] = mass_rover * planet["g"] * math.sin(math.degrees(terrain_angle[x]))
+
+    return Fgt
+
+planet = define_planet()
+print(F_gravity([0, 10, 20, 30, 40, 50, 60, 65, 70, 75], rover, planet), "N")
+
 def F_drive():
     return F_drive
 def F_net():
