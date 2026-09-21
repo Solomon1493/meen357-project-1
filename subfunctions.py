@@ -111,7 +111,6 @@ def F_rolling(omega, terrain_angle, rover, planet, Crr):
         
         #calculate normal force
         Fn = mass_rover * planet["g"] * math.cos(math.radian(terrain_angle[x]))
-        )
         
         #rolling resis
         Frr[x] = -Crr * Fn *math.erf(40 * v_rover)
@@ -142,6 +141,7 @@ print(F_gravity([0, 10, 20, 30, 40, 50, 60, 65, 70, 75], rover, planet), "N")
 
 def F_drive():
     return F_drive
+
 def F_net(omega, terrain_angle, rover, planet, Crr):
     omega = np.atleast_1d(omega)
     terrain_angle = np.atleast_1d(terrain_angle)
