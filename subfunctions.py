@@ -136,9 +136,6 @@ def F_gravity(terrain_angle, rover, planet):
 
     return Fgt
 
-planet = define_planet()
-print(F_gravity([0, 10, 20, 30, 40, 50, 60, 65, 70, 75], rover, planet), "N")
-
 def F_drive():
     return F_drive
 
