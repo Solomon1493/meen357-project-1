@@ -10,15 +10,14 @@ in the previous case, please label your axes properly.
 """
 
 rover = define_rover()
-gear_ratio = get_gear_ratio(rover['wheel_assembly'])
-motor = rover['wheel_assembly']['motor']
+gear_ratio = get_gear_ratio(rover['wheel_assembly']['speed_reducer'])
 
 omega_array = np.linspace(0, 100, 100)
-reduced_tau_array = tau_dcmotor(omega_array, motor) * gear_ratio
-reduced_power_array = reduced_tau_array * omega_array
+tau_array = tau_dcmotor(omega_array, rover['wheel_assembly']['motor']) * gear_ratio
+power_array = tau_array * omega_array
 
 plt.subplot(3,1,1)
-plt.plot(reduced_tau_array, omega_array)
+plt.plot(tau_array, omega_array)
 plt.xlabel('Torque [Nm]')
 plt.ylabel('Speed [rad/s]')
 plt.title('Speed Reducer Speed vs. Speed Reducer Torque')
@@ -28,3 +27,7 @@ plt.plot(tau_array, power_array)
 plt.xlabel('Torque [Nm]')
 plt.ylabel('Power [W]')
 plt.title('Speed Reducer Power vs. Speed Reducer Torque')
+
+plt.tight_layout()
+
+plt.show()
