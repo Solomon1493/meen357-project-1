@@ -119,7 +119,7 @@ def F_rolling(omega, terrain_angle, rover, planet, Crr):
     return Frr
 
 def F_gravity(terrain_angle, rover, planet):
-     if not (np.isscalar(terrain_angle) or np.ndim(terrain_angle) <= 1):
+    if not (np.isscalar(terrain_angle) or np.ndim(terrain_angle) <= 1):
         raise Exception("Terrain angle must be a scalar or vector")
 
     if not isinstance(rover, dict) or not isinstance(planet, dict):
@@ -147,7 +147,7 @@ def F_net(omega, terrain_angle, rover, planet, Crr):
         raise Exception("Omega must be a scalar or vector")
     if not (np.isscalar(terrain_angle) or np.ndim(terrain_angle) <= 1):
         raise Exception("Terrain angle must be a scalar or vector")
-        
+
     if len(omega) != len(terrain_angle):
         raise Exception("Omega and terrain angle must have the same length")
         
