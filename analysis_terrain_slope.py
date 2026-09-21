@@ -23,17 +23,22 @@ finding method. Alternatively, provide an open method with any value on this ran
 '''
 
 crr = 0.15
+rover = define_rover()
+planet = define_planet()
 slope_array_deg = np.linspace(-15,35,25)
 v_max = np.zeros(len(slope_array_deg))
 
-print(v_max)
-# for i, slope in enumerate(slope_array_deg):
-#     slope_rad = np.deg2rad(slope)
-#     F_net = F_net(crr, slope_rad)
-#     v_max[i] = F_net / mass_rover
 
-# plt.plot(slope_array_deg, v_max)
-# plt.xlabel('Slope [deg]')
-# plt.ylabel('Velocity [m/s]')
-# plt.title('Maximum Velocity vs. Slope')
-# plt.show()
+
+
+
+
+###
+plt.plot(slope_array_deg, v_max)
+plt.xlabel('Slope [deg]')
+plt.ylabel('Velocity [m/s]')
+plt.title('Maximum Velocity vs. Slope')
+
+plt.tight_layout()
+
+plt.show()
