@@ -37,6 +37,10 @@ planet = define_planet()
 def tau_dcmotor(omega, motor):
     if not (np.isscalar(omega) or np.ndim(omega) <= 1):
         raise Exception("Omega must be a scalar or vector")
+    
+    if isinstance(omega, str):
+        raise Exception("Omega must be a scalar or vector")
+    
     if not isinstance(motor, dict):
         raise Exception("Motor must be a dictionary")
 
@@ -143,16 +147,29 @@ def F_gravity(terrain_angle, rover, planet):
     return Fgt
 
 def F_drive(omega, rover):
-    if not (np.isscalar(omega) or np.ndim(omega) <= 1):
+    #make sure omega is a 1d array
+    if not (np.isscalar(omega) or np.ndim(omega) == 1):
         raise Exception("Omega must be a scalar or vector")
+    
+    #check omega for invalid data types
+    omega_check = np.atleast_1d(omega)
+    for element in omega_check:
+        #check if not an integer or float
+        if isinstance(element, (str, bool)) or not isinstance(element, (int, float, np.number)):
+            raise Exception("Omega must contain only numeric scalar or vector values")
+    
+    #make sure rover is a dictionary
     if not isinstance(rover, dict):
         raise Exception("Rover must be a dictionary")
-    if isinstance(omega, str):
-        raise Exception("Omega must be a scalar or vector")
-
+   
+    #get gear ratio
     gear_ratio = get_gear_ratio(rover['wheel_assembly']['speed_reducer'])
     tau_motor = tau_dcmotor(omega, rover['wheel_assembly']['motor'])
+    
+    #Torque after speed reducer
     tau_out = gear_ratio * tau_motor
+    
+    #wheel radius
     wheel_radius = rover['wheel_assembly']['wheel']['radius']
 
     Fd = 6 * tau_out / wheel_radius
