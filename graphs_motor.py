@@ -16,29 +16,29 @@ matplotlib.pyplot.xlabel and matplotlib.pyplot.ylabel commands.
 '''
 
 rover = define_rover()
-print(rover)
+speed_noload = rover['wheel_assembly']['motor']['speed_noload']
 
-omega_array = np.linspace(0, 100, 100)
+omega_array = np.linspace(0, speed_noload, 100)
 
 tau_array = tau_dcmotor(omega_array, rover['wheel_assembly']['motor'])
 power_array = tau_array * omega_array
 
 plt.subplot(3,1,1)
-plt.plot(omega_array, tau_array)
-plt.xlabel('Speed [rad/s]')
-plt.ylabel('Torque [Nm]')
+plt.plot(tau_array, omega_array)
+plt.xlabel('Torque [Nm]')
+plt.ylabel('Speed [rad/s]')
 plt.title('Motor Shaft Speed vs. Motor Shaft Torque')
 
 plt.subplot(3,1,2)
-plt.plot(power_array, tau_array)
-plt.xlabel('Power [W]')
-plt.ylabel('Torque [Nm]')
+plt.plot(tau_array, power_array)
+plt.xlabel('Torque [Nm]')
+plt.ylabel('Power [W]')
 plt.title('Motor Power vs. Motor Shaft Torque')
 
 plt.subplot(3,1,3)
-plt.plot(power_array, omega_array)
-plt.xlabel('Power [W]')
-plt.ylabel('Speed [rad/s]')
+plt.plot(omega_array, power_array)
+plt.xlabel('Speed [rad/s]')
+plt.ylabel('Power [W]')
 plt.title('Motor Power vs. Motor Shaft Speed')
 
 plt.tight_layout()
