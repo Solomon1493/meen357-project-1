@@ -45,7 +45,6 @@ ax.set_xlabel('Crr')
 ax.set_ylabel('Slope [deg]')
 ax.set_zlabel('Max Rover Speed [m/s]')
 ax.set_title('Max Rover Speed vs Crr and Slope')
-ax.legend()
 
 plt.tight_layout()
 plt.show()
