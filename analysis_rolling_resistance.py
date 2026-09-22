@@ -19,8 +19,8 @@ def F_net_at_omega(omega, angle, rover, planet, Crr):
 
 for i, Crr in enumerate(Crr_array):
     try:
-        Crr_root = brentq(F_net_at_omega, 0.0, speed_noload, args=(terrain_angle, rover, planet, Crr))
-        v_max[i] = Crr_root * r / Ng
+        omega_root = brentq(F_net_at_omega, 0.0, speed_noload, args=(terrain_angle, rover, planet, Crr))
+        v_max[i] = omega_root * r / Ng
     except ValueError:
         v_max[i] = np.nan
 
