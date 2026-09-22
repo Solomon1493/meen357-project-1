@@ -14,23 +14,26 @@ gear_ratio = get_gear_ratio(rover['wheel_assembly']['speed_reducer'])
 speed_noload = rover['wheel_assembly']['motor']['speed_noload']
 
 omega_array = np.linspace(0, speed_noload, 100)
-tau_array = tau_dcmotor(omega_array, rover['wheel_assembly']['motor']) * gear_ratio
-power_array = tau_array * (omega_array / gear_ratio)
+tau_motor   = tau_dcmotor(omega_array, rover['wheel_assembly']['motor'])
+
+omega_out = omega_array / gear_ratio
+tau_out   = tau_motor * gear_ratio                    
+power_out = tau_out * omega_out                   
 
 plt.subplot(3,1,1)
-plt.plot(tau_array, omega_array)
+plt.plot(tau_out, omega_out)
 plt.xlabel('Torque [Nm]')
 plt.ylabel('Speed [rad/s]')
 plt.title('Speed Reducer Speed vs. Speed Reducer Torque')
 
 plt.subplot(3,1,2)
-plt.plot(tau_array, power_array)
+plt.plot(tau_out, power_out)
 plt.xlabel('Torque [Nm]')
 plt.ylabel('Power [W]')
 plt.title('Speed Reducer Power vs. Speed Reducer Torque')
 
 plt.subplot(3,1,3)
-plt.plot(omega_array, power_array)
+plt.plot(omega_out, power_out)
 plt.xlabel('Speed [rad/s]')
 plt.ylabel('Power [W]')
 plt.title('Speed Reducer Power vs. Speed Reducer Speed')
