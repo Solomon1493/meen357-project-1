@@ -91,6 +91,7 @@ def get_mass(rover):
     return m
 
 def F_rolling(omega, terrain_angle, rover, planet, Crr):
+    is_scalar = np.isscalar(omega) and np.isscalar(terrain_angle)
     omega = np.atleast_1d(omega)
     terrain_angle = np.atleast_1d(terrain_angle)
     
@@ -103,8 +104,8 @@ def F_rolling(omega, terrain_angle, rover, planet, Crr):
     if not isinstance(rover, dict) or not isinstance(planet, dict):
         raise Exception("Rover and planet must be a dictionary")
 
-    if not (np.isscalar(Crr) or Crr >= 0):
-        raise Exception("Crr must be a scalar and greater than or equal to 0")
+    if not np.isscalar(Crr) or isinstance(Crr, str) or Crr <= 0:
+        raise Exception("Crr must be a positive scalar")
 
     mass_rover = get_mass(rover)
     gear_ratio = get_gear_ratio(rover['wheel_assembly']['speed_reducer'])
@@ -124,16 +125,18 @@ def F_rolling(omega, terrain_angle, rover, planet, Crr):
         
         #rolling resis
         Frr[x] = -Crr * Fn *math.erf(40 * v_rover)
-        
     
-    return Frr
+    return Frr[0] if is_scalar else Frr
 
 def F_gravity(terrain_angle, rover, planet):
-    if not (np.isscalar(terrain_angle) or np.ndim(terrain_angle) <= 1):
+    if isinstance(terrain_angle, str) or not (np.isscalar(terrain_angle) or np.ndim(terrain_angle) <= 1):
         raise Exception("Terrain angle must be a scalar or vector")
 
     if not isinstance(rover, dict) or not isinstance(planet, dict):
         raise Exception("Rover and planet must be a dictionary")
+
+    is_scalar = np.isscalar(terrain_angle)
+    terrain_angle = np.atleast_1d(terrain_angle)
 
     if any(angle > 75 or angle < -75 for angle in terrain_angle):
         raise Exception("Slope angle must be between -75 and 75 degrees")
@@ -142,9 +145,9 @@ def F_gravity(terrain_angle, rover, planet):
     Fgt = np.zeros(len(terrain_angle))
 
     for x in range(len(Fgt)):
-        Fgt[x] = mass_rover * -planet["g"] * math.sin(np.radians(terrain_angle[x]))
+        Fgt[x] = -mass_rover * planet["g"] * math.sin(np.radians(terrain_angle[x]))
 
-    return Fgt
+    return Fgt[0] if is_scalar else Fgt
 
 def F_drive(omega, rover):
     #check if omega data type is valid
@@ -172,6 +175,7 @@ def F_drive(omega, rover):
     return Fd
 
 def F_net(omega, terrain_angle, rover, planet, Crr):
+    is_scalar = np.isscalar(omega) and np.isscalar(terrain_angle)
     omega = np.atleast_1d(omega)
     terrain_angle = np.atleast_1d(terrain_angle)
 
@@ -197,4 +201,4 @@ def F_net(omega, terrain_angle, rover, planet, Crr):
     Frr = F_rolling(omega, terrain_angle, rover, planet, Crr)
     
     Fnet = Fd + Fg + Frr
-    return Fnet
+    return Fnet[0] if is_scalar else Fnet
