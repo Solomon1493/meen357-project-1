@@ -34,10 +34,46 @@ for i in range(N):
         except ValueError:
             v_max[i,j] = np.nan
 
+
+
+# # 1. Prepopulate mock 2D matrices using meshgrid
+# crr_axis = np.linspace(0.01, 0.2, 30)
+# slope_axis = np.linspace(0, 25, 30)
+# CRR, SLOPE = np.meshgrid(crr_axis, slope_axis)
+
+# # Mock calculation for Max Rover Speed
+# v_max = np.maximum(0.1, 5.0 - (CRR * 10) - (np.sin(np.radians(SLOPE)) * 8))
+
+# # 2. Initialize using your exact legacy syntax
+# figure = plt.figure(figsize=(8, 6))
+# ax = Axes3D(figure, elev=1, azim=1)
+
+# # Fix: If it's a layout issue, plt.tight_layout() can sometimes collapse
+# # legacy Axes3D instances to a size of 0. We specify the geometry explicitly here.
+# figure.add_axes(ax)
+
+# # 3. Plot the surface
+# ax.plot_surface(CRR, SLOPE, v_max, cmap='viridis')
+
+# # 4. Add labels and title
+# ax.set_xlabel('Crr')
+# ax.set_ylabel('Slope [deg]')
+# ax.set_zlabel('Max Rover Speed [m/s]')
+# ax.set_title('LEGACY TEST: Max Rover Speed vs Crr and Slope')
+
+# plt.show()
 figure = plt.figure()
 
 ax = Axes3D(figure, elev = 5, azim = 5)
 
-ax.plot_surface(CRR, SLOPE, v_max)
+figure.add_axes(ax)
+ax.plot_surface(CRR, SLOPE, v_max, cmap = 'viridis')
 
-ax.plot()
+ax.set_xlabel('Crr')
+ax.set_ylabel('Slope [deg]')
+ax.set_zlabel('Max Rover Speed [m/s]')
+ax.set_title('Max Rover Speed vs Crr and Slope')
+ax.legend()
+
+plt.tight_layout()
+plt.show()
