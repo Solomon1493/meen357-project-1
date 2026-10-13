@@ -19,6 +19,10 @@ def define_rover():
                 'torque_noload': 0,
                 'speed_noload': 3.80,
                 'mass': 5.0
+
+                #PHASE 2____________________________________________________________________
+                'effcy_tau':
+                'effcy':
             }
         },
         'chassis': {'mass': 659},
