@@ -202,3 +202,17 @@ def F_net(omega, terrain_angle, rover, planet, Crr):
     
     Fnet = Fd + Fg + Frr
     return Fnet[0] if is_scalar else Fnet
+
+#PROJECT PHASE 2 ________________________________________________________________
+
+def motorW():
+    
+def rover_dynamics():
+    
+def mechpower():
+    
+def battenergy():
+    
+def simulate_rover():
+    
+

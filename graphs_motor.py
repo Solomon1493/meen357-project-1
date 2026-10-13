@@ -44,3 +44,13 @@ plt.title('Motor Power vs. Motor Shaft Speed')
 plt.tight_layout()
 
 plt.show()
+
+omega_max = motor['speed_noload'] / 2
+
+tau_max = tau_dcmotor(np.array([omega_max]), motor)[0]
+
+power_max = tau_max * omega_max
+
+print("Maximum Power:", power_max, "W")
+print("Motor Shaft Speed:", omega_max, "rad/s")
+print("Motor Torque:", tau_max, "Nm")
