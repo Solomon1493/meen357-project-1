@@ -1,5 +1,7 @@
 import math
 import numpy as np
+from define_experiment import *
+from experiment_visualization import *
 
 def define_rover():
     rover = {
@@ -209,10 +211,40 @@ def F_net(omega, terrain_angle, rover, planet, Crr):
 
 #PROJECT PHASE 2 ________________________________________________________________
 
-# def motorW():
+def motorW(v, rover): #NEEDS TESTING
+    if not (isinstance(v, np.ndarray) or np.isscalar(v)):
+        raise Exception("v must be a scalar or vector")
+    if not isinstance(rover, dict):
+        raise Exception("Rover must be a dictionary")
+
+    motor = rover["wheel_assembly"]["motor"]
+    sr = rover["wheel_assembly"]["speed_reducer"]
+    wheel = rover["wheel_assembly"]["wheel"]
+    ratio = get_gear_ratio(sr)
+    radius = wheel["radius"]
+    omega = v / (radius * ratio)
+    tau = tau_dcmotor(omega, motor)
+    W = 6 * tau * omega
+    return W
+
+def rover_dynamics(t, y, rover, planet, experiment): # ex. t = 10,  y = [v, x]
+    v = y[0]
+    x = y[1]
+
+    alpha_fun = interp1d(experiment[0]['alpha_dist'], experiment[0]['alpha_deg'], kind = 'cubic', fill_value = 'extrapolate')
+
+    terrain_angle = alpha_fun(x)
+    W = motorW(v, rover)
+    m = get_mass(rover)
+    Crr = experiment[0]['Crr']
+
+    Fnet = F_net(W, terrain_angle, rover, planet, Crr)
+
+    dydt = np.array([Fnet / m, v])
+    return dydt
     
-# def rover_dynamics():
-    
+print(rover_dynamics(10, [10, 10], rover, planet, experiment1()))
+
 # def mechpower():
     
 # def battenergy():

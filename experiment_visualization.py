@@ -16,16 +16,14 @@ x = np.linspace(0, 1000, 1001)
 y = alpha_fun(x)
 
 print(x)
-
 print(y)
 
-plt.plot(x, y, linestyle='-', label='Line Plot')
+plt.plot(x, y, linestyle='-', label='Fitted Curve')
+plt.plot(alpha_dist, alpha_deg, marker="*", linestyle='None', markersize=10, label='Experiment Data')
 
-# Customize the chart
-plt.title('Line Plot vs. Star Symbols')
-plt.xlabel('X Axis')
-plt.ylabel('Y Axis')
+plt.title('Alpha vs. Distance')
+plt.xlabel('Distance (mm)')
+plt.ylabel('Alpha (deg)')
 plt.legend()
 
-# Display the plot
 plt.show()
