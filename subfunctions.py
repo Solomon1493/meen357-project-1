@@ -18,11 +18,11 @@ def define_rover():
                 'torque_stall': 170,
                 'torque_noload': 0,
                 'speed_noload': 3.80,
-                'mass': 5.0
+                'mass': 5.0,
 
                 #PHASE 2____________________________________________________________________
-                'effcy_tau':
-                'effcy':
+                'effcy_tau': np.array([0, 10, 20, 40, 70, 165]),
+                'effcy': np.array([0,0.55, 0.75, 0.71, 0.50, 0.05])
             }
         },
         'chassis': {'mass': 659},
@@ -209,14 +209,14 @@ def F_net(omega, terrain_angle, rover, planet, Crr):
 
 #PROJECT PHASE 2 ________________________________________________________________
 
-def motorW():
+# def motorW():
     
-def rover_dynamics():
+# def rover_dynamics():
     
-def mechpower():
+# def mechpower():
     
-def battenergy():
+# def battenergy():
     
-def simulate_rover():
+# def simulate_rover():
     
 
