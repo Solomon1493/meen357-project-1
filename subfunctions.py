@@ -233,11 +233,11 @@ def rover_dynamics(t, y, rover, planet, experiment): # ex. t = 10,  y = [v, x]
 
     alpha_fun = interp1d(experiment[0]['alpha_dist'], experiment[0]['alpha_deg'], kind = 'cubic', fill_value = 'extrapolate')
 
-    terrain_angle = alpha_fun(x)
+    terrain_angle = float(alpha_fun(x))
     W = motorW(v, rover)
     m = get_mass(rover)
     Crr = experiment[0]['Crr']
-
+    
     Fnet = F_net(W, terrain_angle, rover, planet, Crr)
 
     dydt = np.array([Fnet / m, v])
@@ -245,8 +245,44 @@ def rover_dynamics(t, y, rover, planet, experiment): # ex. t = 10,  y = [v, x]
     
 print(rover_dynamics(10, [10, 10], rover, planet, experiment1()))
 
-# def mechpower():
+def mechpower(v, rover):
+    """
+    Compute the instantaneous mech power of the DC motor.
     
+    Inputs:
+        1) v: Rover Velocity in meters/second as a scalar or 1D array
+        2) rover: Dictionary containing rover parameters
+    
+    Ouputs:
+        1) P: Mechanical Power W, in Scalar or 1d array
+    """
+    
+    #Confirm valid parameter values
+    if isinstance(v, np.ndarray):
+        if v.ndim != 1 or not np.issubdtype(v.dtype, np.number):
+            raise Exception("Velocity must be a numerical scalar or 1D array value")
+    elif not np.isscalar(v) or isinstance(v, (str, bytes, bool)) or not isinstance(v, (int, float, np.number)):
+        raise Exception("Velocity must be a numerical scalar or 1D array value")
+    
+    #Validate rover dict value
+    if not isinstance(rover, dict):
+        raise Exception("Rover must be a dictionary")
+        
+    #Find motor value
+    motor = rover["wheel_assembly"]["motor"]
+    
+    #Convert rover velocity into angular speed in radians/second
+    omega = motorW(v,rover)
+    
+    #Calculate motor shaft torque in Newton-Meters
+    tau = tau_dcmotor(omega, motor)
+    
+    #calculate mechanical power in Watts
+    P = tau * omega
+    
+    return P
+
+
 # def battenergy():
     
 # def simulate_rover():
