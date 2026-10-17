@@ -260,9 +260,9 @@ def mechpower(v, rover):
     #Confirm valid parameter values
     if isinstance(v, np.ndarray):
         if v.ndim != 1 or not np.issubdtype(v.dtype, np.number):
-            raise Exception("Velocity must be a numerical scalar or 1D array value")
+            raise Exception("Velocity must be a numerical scalar or 1D numPy array ")
     elif not np.isscalar(v) or isinstance(v, (str, bytes, bool)) or not isinstance(v, (int, float, np.number)):
-        raise Exception("Velocity must be a numerical scalar or 1D array value")
+        raise Exception("Velocity must be a numerical scalar or 1D numPy array")
     
     #Validate rover dict value
     if not isinstance(rover, dict):
@@ -283,7 +283,77 @@ def mechpower(v, rover):
     return P
 
 
-# def battenergy():
+def battenergy(t, v, rover):
+    """
+    Computes the total battery energy used by all 6 motors in the rover.
+    
+    Inputs:
+        1) t: 1d array of time values in seconds
+        2) v: 1d array of rover velocities in meters per second
+        3) rover: Dictionary of rover parameters
+    
+    Ouputs:
+        1) E: Total battery energy consumed by the motors in Joules
+    """
+    
+    #Confirm values are valid
+    if not isinstance(t, np.ndarray) or t.ndim != 1:
+        raise Exception("Time must be a 1d NumPy array")
+        
+    if not isinstance(v, np.ndarray) or v.ndim != 1:
+        raise Exception("Velocity must be a 1d numPy array")
+        
+    if len(t) != len(v):
+        raise Exception("Time and velocity must have equal array lengths")
+        
+    if not np.ussubdtype(t.dtype, np.number) or not np.issubdtype(v.dtype, np.number):
+        raise Exception("Time and velocity must contain numerical, float, or scalar values")
+        
+    if not isinstance(rover, dict):
+        raise Exception("Rover must be a dictionary")
+        
+    #get motor values
+    motor = rover["wheel_assembly"]["motor"]
+    
+    #Convert rover velocity into angular speed
+    omega = motorW(v,rover)
+    #calculate motor torque
+    tau = tau_dcmotor(omega, motor)
+    
+    #calculate mechanical power of a motor
+    P_mech = mechpower(v, rover)
+    
+    #find efficiency statstics/data
+    eff_tau = motor["eff_tau"]
+    eff = motor["eff"]
+    
+    #Interpolate efficiency vs torque
+    eff_func = interp1d(eff_tau, eff)
+    
+    eta = eff_func(tau)
+    
+    #calculate power used by all 6 motors on rover
+    P_battery = 6 * P_mech / eta
+    
+    #Integrate power
+    energy = np.trapezoid(P_battery, t)
+    
+    return energy
+
+    # Parameters
+    # ----------
+    # t : TYPE
+    #     DESCRIPTION.
+    # v : TYPE
+    #     DESCRIPTION.
+    # rover : TYPE
+    #     DESCRIPTION.
+
+    # Returns
+    # -------
+    # None.
+
+    # """
     
 # def simulate_rover():
     
