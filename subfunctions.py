@@ -230,6 +230,22 @@ def motorW(v, rover): #NEEDS TESTING
 
 
 def rover_dynamics(t, y, rover, planet, experiment): # ex. t = 10,  y = [v, x]
+    """
+    Finds values for the derivative of the rover state vector.
+    
+    Parameters
+    ----------
+    t : Current simulation time in seconds
+    y : State vector [velocity, position]
+    rover : Dictionary with Rover characteristics
+    planet : Dictionary with Planet characteristics
+    experiment : Dictionary with expirement parameters
+
+    Returns
+    -------
+    dydt : Array with [acceleration, velocity]
+
+    """
     v = y[0]
     x = y[1]
 
@@ -252,12 +268,12 @@ def mechpower(v, rover):
     """
     Compute the instantaneous mech power of the DC motor.
     
-    Inputs:
-        1) v: Rover Velocity in meters/second as a scalar or 1D array
-        2) rover: Dictionary containing rover parameters
+    Parameters:
+        v: Rover Velocity in meters/second as a scalar or 1D array
+        rover: Dictionary containing rover parameters
     
-    Ouputs:
-        1) P: Mechanical Power W, in Scalar or 1d array
+    Returns
+        P: Mechanical Power W, in Scalar or 1d array
     """
     
     #Confirm valid parameter values
@@ -290,13 +306,13 @@ def battenergy(t, v, rover):
     """
     Computes the total battery energy used by all 6 motors in the rover.
     
-    Inputs:
-        1) t: 1d array of time values in seconds
-        2) v: 1d array of rover velocities in meters per second
-        3) rover: Dictionary of rover parameters
+    Parameters:
+        t: 1d array of time values in seconds
+        v: 1d array of rover velocities in meters per second
+        rover: Dictionary of rover parameters
     
-    Ouputs:
-        1) E: Total battery energy consumed by the motors in Joules
+    Returns:
+        E: Total battery energy consumed by the motors in Joules
     """
     
     #Confirm values are valid
@@ -309,7 +325,7 @@ def battenergy(t, v, rover):
     if len(t) != len(v):
         raise Exception("Time and velocity must have equal array lengths")
         
-    if not np.ussubdtype(t.dtype, np.number) or not np.issubdtype(v.dtype, np.number):
+    if not np.issubdtype(t.dtype, np.number) or not np.issubdtype(v.dtype, np.number):
         raise Exception("Time and velocity must contain numerical, float, or scalar values")
         
     if not isinstance(rover, dict):
@@ -322,10 +338,10 @@ def battenergy(t, v, rover):
     
     P_mech = mechpower(v, rover)
     
-    eff_tau = motor["eff_tau"]
-    eff = motor["eff"]
+    effcy_tau = motor["effcy_tau"]
+    effcy = motor["effcy"]
     
-    eff_func = interp1d(eff_tau, eff)
+    eff_func = interp1d(effcy_tau, effcy)
     
     eta = eff_func(tau)
     
@@ -338,6 +354,31 @@ def battenergy(t, v, rover):
 
     
 def simulate_rover(rover, planet, experiment, end_event):
+    """
+    
+
+    Parameters
+    ----------
+    rover : TYPE
+        DESCRIPTION.
+    planet : TYPE
+        DESCRIPTION.
+    experiment : TYPE
+        DESCRIPTION.
+    end_event : TYPE
+        DESCRIPTION.
+
+    Raises
+    ------
+    Exception
+        DESCRIPTION.
+
+    Returns
+    -------
+    rover : TYPE
+        DESCRIPTION.
+
+    """
     if not isinstance(rover, dict):
         raise Exception("Rover must be a dictionary")
     if not isinstance(planet, dict):
@@ -352,10 +393,10 @@ def simulate_rover(rover, planet, experiment, end_event):
     v0 = initial_conditions[0]
     x0 = initial_conditions[1]
     
-    alpha_fun = interp1d(experiment[0]['alpha_dist'], experiment[0]['alpha_deg'], kind = 'cubic', fill_value = 'extrapolate')
+    alpha_fun = interp1d(experiment['alpha_dist'], experiment['alpha_deg'], kind = 'cubic', fill_value = 'extrapolate')
     terrain_angle = float(alpha_fun(x0))
     m = get_mass(rover)
-    Crr = experiment[0]['Crr']
+    Crr = experiment['Crr']
     W = motorW(v0, rover)
     Fnet = F_net(W, terrain_angle, rover, planet, Crr)
     dydt = np.array([Fnet / m, v0])
