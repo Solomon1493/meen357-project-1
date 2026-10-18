@@ -4,6 +4,7 @@ from scipy.integrate import solve_ivp
 from scipy.interpolate import interp1d
 from define_experiment import *
 from experiment_visualization import *
+from end_of_mission_event import end_of_mission_event
 
 def define_rover():
     rover = {
@@ -249,12 +250,12 @@ def rover_dynamics(t, y, rover, planet, experiment): # ex. t = 10,  y = [v, x]
     v = y[0]
     x = y[1]
 
-    alpha_fun = interp1d(experiment[0]['alpha_dist'], experiment[0]['alpha_deg'], kind = 'cubic', fill_value = 'extrapolate')
+    alpha_fun = interp1d(experiment['alpha_dist'], experiment['alpha_deg'], kind = 'cubic', fill_value = 'extrapolate')
 
     terrain_angle = float(alpha_fun(x))
     W = motorW(v, rover)
     m = get_mass(rover)
-    Crr = experiment[0]['Crr']
+    Crr = experiment['Crr']
     
     Fnet = F_net(W, terrain_angle, rover, planet, Crr)
 
@@ -341,7 +342,7 @@ def battenergy(t, v, rover):
     effcy_tau = motor["effcy_tau"]
     effcy = motor["effcy"]
     
-    eff_func = interp1d(effcy_tau, effcy)
+    eff_func = interp1d(effcy_tau, effcy, kind = "cubic")
     
     eta = eff_func(tau)
     
@@ -388,20 +389,67 @@ def simulate_rover(rover, planet, experiment, end_event):
     if not isinstance(end_event, dict):
         raise Exception("End event must be a dictionary")
         
-
-    initial_conditions = experiment[0]['initial_conditions']
-    v0 = initial_conditions[0]
-    x0 = initial_conditions[1]
+    #Old code
+    # initial_conditions = experiment[0]['initial_conditions']
+    # v0 = initial_conditions[0]
+    # x0 = initial_conditions[1]
     
-    alpha_fun = interp1d(experiment['alpha_dist'], experiment['alpha_deg'], kind = 'cubic', fill_value = 'extrapolate')
-    terrain_angle = float(alpha_fun(x0))
-    m = get_mass(rover)
-    Crr = experiment['Crr']
-    W = motorW(v0, rover)
-    Fnet = F_net(W, terrain_angle, rover, planet, Crr)
-    dydt = np.array([Fnet / m, v0])
-    rover_dynamics = solve_ivp(rover_dynamics, t_span, initial_conditions, args=(rover, planet, experiment), t_eval=t_eval)
-    v = rover_dynamics.y[0]
+    # alpha_fun = interp1d(experiment['alpha_dist'], experiment['alpha_deg'], kind = 'cubic', fill_value = 'extrapolate')
+    # terrain_angle = float(alpha_fun(x0))
+    # m = get_mass(rover)
+    # Crr = experiment['Crr']
+    # W = motorW(v0, rover)
+    # Fnet = F_net(W, terrain_angle, rover, planet, Crr)
+    # dydt = np.array([Fnet / m, v0])
+    # rover_dynamics = solve_ivp(rover_dynamics, t_span, initial_conditions, args=(rover, planet, experiment), t_eval=t_eval)
+    # v = rover_dynamics.y[0]
+    
+    #New code
+    #Get ICs and time span
+    initial_conditions = experiment["initial_conditions"]
+    t_span = experiment["time_range"]
+    
+    #Get mission stopping conditions
+    events = end_of_mission_event(end_event)
+    
+    #Solve Rover EOM
+    sol = solve_ivp(rover_dynamics, t_span, initial_conditions, args=(rover, planet, experiment), events=events, ma_step=1)
+    
+    #check if solution passed
+    if not sol.success:
+        raise Exception(sol.message)
+        
+    #Get time, speed, and position values
+    t = sol.t
+    v = sol.y[0]
+    x = sol.y[1]
+    
+    #Calculate mechanical power and battery energy
+    P = mechpower(v, rover)
+    E = battenergy(t, v, rover)
+    
+    #Calculate telemetry values
+    completion_time = t[-1] - t[0]
+    distance_traveled = x[-1] - x[0]
+    max_velocity = np.max(v)
+    
+    if completion_time > 0:
+        average_velocity = np.trapezoid(v, t) / completion_time
+    else:
+        average_velocity = 0
+        
+    if distance_traveled > 0:
+        energy_per_distance = E / distance_traveled
+    else:
+        energy_per_distance = v0
+    
+    #Simulation results of the rover
+    rover["telemetry"] = {"Time": t, "completion_time": completion_time, "velocity": v, "position": x, "distance_traveled": distance_traveled, "max_velocity": max_velocity, "average_velocity": average_velocity, "power": P, "battery_energy": E, "energy_per_distance": energy_per_distance}
+    
+    return rover
+    
+    
+    
 
     return rover
 
