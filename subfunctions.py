@@ -450,4 +450,3 @@ def simulate_rover(rover, planet, experiment, end_event):
     
 
     return rover
-
