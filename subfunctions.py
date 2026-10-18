@@ -219,18 +219,15 @@ def motorW(v, rover): #NEEDS TESTING
     if not isinstance(rover, dict):
         raise Exception("Rover must be a dictionary")
 
-    motor = rover["wheel_assembly"]["motor"]
     sr = rover["wheel_assembly"]["speed_reducer"]
     wheel = rover["wheel_assembly"]["wheel"]
+
     ratio = get_gear_ratio(sr)
-    radius = wheel["radius"]
-    omega = v / (radius * ratio)
-    tau = tau_dcmotor(omega, motor)
-    W = 6 * tau * omega
-    
+    r = wheel["radius"]
+    W = (v / r) * ratio
+
     return W
 
-print(motorW(10, rover))
 
 def rover_dynamics(t, y, rover, planet, experiment): # ex. t = 10,  y = [v, x]
     v = y[0]
@@ -246,7 +243,10 @@ def rover_dynamics(t, y, rover, planet, experiment): # ex. t = 10,  y = [v, x]
     Fnet = F_net(W, terrain_angle, rover, planet, Crr)
 
     dydt = np.array([Fnet / m, v])
+
     return dydt
+
+print(rover_dynamics(10, [10, 10], rover, planet, experiment1()))
 
 def mechpower(v, rover):
     """
@@ -364,3 +364,4 @@ def simulate_rover(rover, planet, experiment, end_event):
 
     return rover
 
+print(simulate_rover(rover, planet, experiment1(), experiment1()))
