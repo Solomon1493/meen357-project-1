@@ -1,5 +1,7 @@
 import math
 import numpy as np
+from scipy.integrate import solve_ivp
+from scipy.interpolate import interp1d
 from define_experiment import *
 from experiment_visualization import *
 
@@ -225,7 +227,10 @@ def motorW(v, rover): #NEEDS TESTING
     omega = v / (radius * ratio)
     tau = tau_dcmotor(omega, motor)
     W = 6 * tau * omega
+    
     return W
+
+print(motorW(10, rover))
 
 def rover_dynamics(t, y, rover, planet, experiment): # ex. t = 10,  y = [v, x]
     v = y[0]
@@ -242,8 +247,6 @@ def rover_dynamics(t, y, rover, planet, experiment): # ex. t = 10,  y = [v, x]
 
     dydt = np.array([Fnet / m, v])
     return dydt
-    
-print(rover_dynamics(10, [10, 10], rover, planet, experiment1()))
 
 def mechpower(v, rover):
     """
@@ -312,49 +315,52 @@ def battenergy(t, v, rover):
     if not isinstance(rover, dict):
         raise Exception("Rover must be a dictionary")
         
-    #get motor values
     motor = rover["wheel_assembly"]["motor"]
     
-    #Convert rover velocity into angular speed
     omega = motorW(v,rover)
-    #calculate motor torque
     tau = tau_dcmotor(omega, motor)
     
-    #calculate mechanical power of a motor
     P_mech = mechpower(v, rover)
     
-    #find efficiency statstics/data
     eff_tau = motor["eff_tau"]
     eff = motor["eff"]
     
-    #Interpolate efficiency vs torque
     eff_func = interp1d(eff_tau, eff)
     
     eta = eff_func(tau)
     
-    #calculate power used by all 6 motors on rover
     P_battery = 6 * P_mech / eta
     
     #Integrate power
-    energy = np.trapezoid(P_battery, t)
+    E = np.trapezoid(P_battery, t)
     
-    return energy
+    return E
 
-    # Parameters
-    # ----------
-    # t : TYPE
-    #     DESCRIPTION.
-    # v : TYPE
-    #     DESCRIPTION.
-    # rover : TYPE
-    #     DESCRIPTION.
-
-    # Returns
-    # -------
-    # None.
-
-    # """
     
-# def simulate_rover():
+def simulate_rover(rover, planet, experiment, end_event):
+    if not isinstance(rover, dict):
+        raise Exception("Rover must be a dictionary")
+    if not isinstance(planet, dict):
+        raise Exception("Planet must be a dictionary")
+    if not isinstance(experiment, dict):
+        raise Exception("Experiment must be a dictionary")
+    if not isinstance(end_event, dict):
+        raise Exception("End event must be a dictionary")
+        
+
+    initial_conditions = experiment[0]['initial_conditions']
+    v0 = initial_conditions[0]
+    x0 = initial_conditions[1]
     
+    alpha_fun = interp1d(experiment[0]['alpha_dist'], experiment[0]['alpha_deg'], kind = 'cubic', fill_value = 'extrapolate')
+    terrain_angle = float(alpha_fun(x0))
+    m = get_mass(rover)
+    Crr = experiment[0]['Crr']
+    W = motorW(v0, rover)
+    Fnet = F_net(W, terrain_angle, rover, planet, Crr)
+    dydt = np.array([Fnet / m, v0])
+    rover_dynamics = solve_ivp(rover_dynamics, t_span, initial_conditions, args=(rover, planet, experiment), t_eval=t_eval)
+    v = rover_dynamics.y[0]
+
+    return rover
 
