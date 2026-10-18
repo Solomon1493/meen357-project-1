@@ -1,24 +1,23 @@
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
-from subfunctions import define_rover
+from subfunctions import *
+from define_experiment import *
 
-rover = define_rover()
-motor = rover['wheel_assembly']['motor']
-effcy_tau = motor['effcy_tau']
-effcy = motor['effcy']
+experiment = experiment1()
+effcy_tau = experiment[0]['effcy_tau']
+effcy = experiment[0]['effcy']
 
 effcy_fun = interp1d(effcy_tau, effcy, kind = 'cubic') # fit the cubic spline
 
-tau = np.linspace(np.min(effcy_tau), np.max(effcy_tau), 100)
-effcy_fit = effcy_fun(tau)
+x = np.linspace(0, 1000, 1001)
+y = effcy_fun(x)
 
-plt.plot(tau, effcy_fit, linestyle='-', label='Cubic spline')
-plt.plot(effcy_tau, effcy, marker="*", linestyle='None', markersize=10, label='Rover data')
+plt.plot(x, y, linestyle='-', label='Fitted Curve')
+plt.plot(effcy_tau, effcy, marker="*", linestyle='None', markersize=10, label='Experiment Data')
 
 plt.title('Efficiency vs. Torque')
-plt.xlabel('Motor torque (N m)')
-plt.ylabel('Efficiency (fraction)')
+plt.xlabel('Torque (N-m)')
+plt.ylabel('Efficiency')
 plt.legend()
-
-plt.show()
