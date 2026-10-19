@@ -3,7 +3,10 @@ import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.interpolate import interp1d
 from define_experiment import *
+<<<<<<< HEAD
 from experiment_visualization import *
+=======
+>>>>>>> 15214cd2de0e8112b38ae8c71315a4b30d089ebb
 from end_of_mission_event import end_of_mission_event
 
 def define_rover():
@@ -263,8 +266,11 @@ def rover_dynamics(t, y, rover, planet, experiment): # ex. t = 10,  y = [v, x]
 
     return dydt
 
+<<<<<<< HEAD
 print(rover_dynamics(10, [10, 10], rover, planet, experiment1()))
 
+=======
+>>>>>>> 15214cd2de0e8112b38ae8c71315a4b30d089ebb
 def mechpower(v, rover):
     """
     Compute the instantaneous mech power of the DC motor.
@@ -413,7 +419,11 @@ def simulate_rover(rover, planet, experiment, end_event):
     events = end_of_mission_event(end_event)
     
     #Solve Rover EOM
+<<<<<<< HEAD
     sol = solve_ivp(rover_dynamics, t_span, initial_conditions, args=(rover, planet, experiment), events=events, ma_step=1)
+=======
+    sol = solve_ivp(rover_dynamics, t_span, initial_conditions, args=(rover, planet, experiment), events=events, max_step=1)
+>>>>>>> 15214cd2de0e8112b38ae8c71315a4b30d089ebb
     
     #check if solution passed
     if not sol.success:
@@ -452,5 +462,8 @@ def simulate_rover(rover, planet, experiment, end_event):
     
 
     return rover
+<<<<<<< HEAD
 
 print(simulate_rover(rover, planet, experiment1(), experiment1()))
+=======
+>>>>>>> 15214cd2de0e8112b38ae8c71315a4b30d089ebb
