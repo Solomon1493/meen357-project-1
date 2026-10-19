@@ -22,10 +22,12 @@ def main():
     figure, axes = plt.subplots(3, 1, sharex=True)
     axes[0].plot(time, telemetry["position"])
     axes[0].set_title("Position vs. Time")
+    axes[0].set_xlabel("Time (s)")
     axes[0].set_ylabel("Position (m)")
 
     axes[1].plot(time, telemetry["velocity"])
     axes[1].set_title("Velocity vs. Time")
+    axes[1].set_xlabel("Time (s)")
     axes[1].set_ylabel("Velocity (m/s)")
 
     axes[2].plot(time, telemetry["power"])

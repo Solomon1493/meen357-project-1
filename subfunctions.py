@@ -463,7 +463,7 @@ def simulate_rover(rover, planet, experiment, end_event):
     
     #Solve Rover EOM
 
-    sol = solve_ivp(rover_dynamics, t_span, initial_conditions, args=(rover, planet, experiment), events=events, max_step=1)
+    sol = solve_ivp(lambda t, y: rover_dynamics(t, y, rover, planet, experiment), t_span, initial_conditions, events=events, max_step=1)
 
     
     #check if solution passed
