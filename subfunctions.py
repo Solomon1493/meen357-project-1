@@ -214,6 +214,25 @@ def F_net(omega, terrain_angle, rover, planet, Crr):
 #PROJECT PHASE 2 ________________________________________________________________
 
 def motorW(v, rover): #NEEDS TESTING
+    """
+    Calculate the Angular Velocity of the DC motor shaft based on the rover's velocity, wheel radius, and speed reducer gear ratio'
+
+    Parameters
+    ----------
+    v : np.ndarray or scalar (float or integer) value that represents the translational velocity of the rover in meters per second.
+    rover : Dictionary that contains rover characteristics.
+
+    Returns
+    -------
+    W : np.ndarray or scalar (float or integer) value that is the calculated angular velocity of the shaft in radians per second.
+    
+    Raises
+    ------
+    Excpetion if velocity is not a np.ndarray or scalar value
+    Exception if rover is not a dictionary
+    -------
+
+    """
     if not (isinstance(v, np.ndarray) or np.isscalar(v)):
         raise Exception("v must be a scalar or vector")
     if not isinstance(rover, dict):
@@ -395,24 +414,19 @@ def simulate_rover(rover, planet, experiment, end_event):
 
     Parameters
     ----------
-    rover : TYPE
-        DESCRIPTION.
-    planet : TYPE
-        DESCRIPTION.
-    experiment : TYPE
-        DESCRIPTION.
-    end_event : TYPE
-        DESCRIPTION.
+    rover : dict that contains rover specifications.
+    planet : dictionary containing planetary specifications.
+    experiment : dictionary containing initial conditions and variables such as time range, terrain distance, slope, and rolling resistance coefficient.
+    end_event : dictionary containing maximum values for distance and time, and the minimum velocity conditions. 
 
     Raises
     ------
     Exception
-        DESCRIPTION.
+        if any parameters are not a dictionary.
 
     Returns
     -------
-    rover : TYPE
-        DESCRIPTION.
+    rover : updated rover characteristics.
 
     """
     if not isinstance(rover, dict):
