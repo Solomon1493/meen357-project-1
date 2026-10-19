@@ -3,7 +3,6 @@ import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.interpolate import interp1d
 from define_experiment import *
-from end_of_mission_event import end_of_mission_event
 
 def define_rover():
     rover = {
