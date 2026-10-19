@@ -490,7 +490,8 @@ def simulate_rover(rover, planet, experiment, end_event):
         average_velocity = 0
         
     if distance_traveled > 0:
-        energy_per_distance = E / distance_traveled
+        total_energy = E[-1] if isinstance(E, np.ndarray) else E
+        energy_per_distance = total_energy / distance_traveled
     else:
         energy_per_distance = 0
     
@@ -499,5 +500,6 @@ def simulate_rover(rover, planet, experiment, end_event):
     
     return rover
 
-#print(simulate_rover(rover, planet, experiment1(), experiment1()))
+experiment, end_event = experiment1()
+print(simulate_rover(rover, planet, experiment, end_event))
 
