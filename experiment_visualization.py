@@ -12,7 +12,7 @@ alpha_deg = experiment[0]['alpha_deg']
 
 alpha_fun = interp1d(alpha_dist, alpha_deg, kind = 'cubic', fill_value = 'extrapolate') # fit the cubic spline
 
-x = np.linspace(0, 1000, 1001)
+x = np.linspace(min(alpha_dist), max(alpha_dist), 100)
 y = alpha_fun(x)
 
 
@@ -20,7 +20,7 @@ plt.plot(x, y, linestyle='-', label='Fitted Curve')
 plt.plot(alpha_dist, alpha_deg, marker="*", linestyle='None', markersize=10, label='Experiment Data')
 
 plt.title('Alpha vs. Distance')
-plt.xlabel('Distance (mm)')
+plt.xlabel('Distance (m)')
 plt.ylabel('Alpha (deg)')
 plt.legend()
 
