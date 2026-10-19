@@ -462,8 +462,6 @@ def simulate_rover(rover, planet, experiment, end_event):
     
 
     return rover
-<<<<<<< HEAD
 
 print(simulate_rover(rover, planet, experiment1(), experiment1()))
-=======
->>>>>>> 15214cd2de0e8112b38ae8c71315a4b30d089ebb
+
