@@ -3,7 +3,6 @@ import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.interpolate import interp1d
 from define_experiment import *
-from experiment_visualization import *
 from end_of_mission_event import end_of_mission_event
 
 def define_rover():
@@ -416,7 +415,7 @@ def simulate_rover(rover, planet, experiment, end_event):
     
     #Solve Rover EOM
 
-    sol = solve_ivp(rover_dynamics, t_span, initial_conditions, args=(rover, planet, experiment), events=events, ma_step=1)
+    sol = solve_ivp(rover_dynamics, t_span, initial_conditions, args=(rover, planet, experiment), events=events, max_step=1)
 
     
     #check if solution passed
