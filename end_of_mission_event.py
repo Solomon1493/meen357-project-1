@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 def end_of_mission_event(end_event):
     """
     Defines an event that terminates the mission simulation. Mission is over
@@ -32,7 +32,6 @@ def end_of_mission_event(end_event):
     
     events = [distance_left, time_left, velocity_threshold]
     
-=======
 def end_of_mission_event(end_event):
     """
     Defines an event that terminates the mission simulation. Mission is over
@@ -66,5 +65,4 @@ def end_of_mission_event(end_event):
     
     events = [distance_left, time_left, velocity_threshold]
     
->>>>>>> 15214cd2de0e8112b38ae8c71315a4b30d089ebb
     return events
