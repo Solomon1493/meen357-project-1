@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"name": "meen357-project-1",
+			"path": "."
+		}
+	],
+	"settings": {
+		"python-envs.defaultEnvManager": "ms-python.python:system",
+		"python-envs.defaultPackageManager": "ms-python.python:pip",
+		"python-envs.pythonProjects": [
+			{
+				"path": "meen368_project",
+				"envManager": "ms-python.python:system",
+				"packageManager": "ms-python.python:pip"
+			}
+		]
+	}
+}
