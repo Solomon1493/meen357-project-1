@@ -11,6 +11,19 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import PchipInterpolator as pchip
 from scipy.integrate import solve_ivp
 
+#Table Data Values
+def mach_efficiency(M):
+    mach_data = np.array([0.25, 0.5, 0.65, 0.7, 0.8, 0.9, 0.95, 1.0, 1.1, 1.2, 1.3, 1.3, 1.5, 1.6, 1.8, 1.9, 2.0, 2.2, 2.5, 2.6])
+    
+    MEF_data = np.array([1.0, 1.0, 1.0, 0.97, 0.91, 0.72, 0.66, 0.75, 0.9, 0.96, 0.990, 0.999, 0.992, 0.98, 0.91, 0.85, 0.82, 0.75, 0.64, 0.62])
+    
+    #Interpolate
+    MEF_model = pchip(mach_data, MEF_data)
+    
+    #Limit data input range
+    M = np.clip(M, mach_data[0], mach_data[-1])
+    
+    return float(MEF_model(M))
 
 def get_mass_rover(edl_system):
 

@@ -32,8 +32,8 @@ for diameter in diameters:
     mission_events = define_mission_events()
     
     #make ICs
-    edl_system["altitude"] = 11000
-    edl_system["velocity"] = -590
+    edl_system["altitude"] = 11000 #meters
+    edl_system["velocity"] = -590 #meters/second
     
     edl_system["parachute"]["diameter"] = diameter
     edl_system["parachute"]["deployed"] = True
@@ -52,7 +52,7 @@ for diameter in diameters:
     #Record the time the simulation ends
     time_end = t[-1]
     #Rover speed
-    rover_speed = Y[0,-1] + Y[5,-1]
+    rover_speed = abs(Y[0,-1] + Y[5,-1])
     #altitude at trial termination
     sky_crane_altitude = Y[1,-1]
     
@@ -81,16 +81,16 @@ axs[0].grid(True)
 
 #Plot 2: Rover velocity vs parachute diameter
 axs[1].plot(diameters, rover_speeds, "o-")
-axs[1].set_title("Rover Velocity vs Parachute Diameter")
+axs[1].set_title("Rover Speed vs Parachute Diameter")
 axs[1].set_xlabel("Parachute Diameter (m)")
-axs[1].set_ylabel("Rover Velocity (m/s)")
+axs[1].set_ylabel("Rover Speed (m/s)")
 axs[1].grid(True)
 
 #Plot 3: Landing success vs paracute diameter
 axs[2].plot(diameters, landing_success, "o-")
 axs[2].set_title("Landing Success vs Parachute Diameter")
 axs[2].set_xlabel("Parachute Diameter (m)")
-axs[2].set_ylabel("Landing Success, 1 is yes and 0 is no")
+axs[2].set_ylabel("Landing Success, 1 is Yes and 0 is No")
 axs[2].set_yticks([0,1])
 axs[2].grid(True)
 
