@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from define_edl_system import define_edl_system_1
 from define_planet import define_planet
 from define_mission_events import define_mission_events
-from subfunctions_EDL import simulate_edl
+from subfunctions_EDL import simulate_edl, mach_efficiency
 
 
 #change to np.nan
@@ -110,6 +110,7 @@ plt.xlabel("Mach number")
 plt.ylabel("Mach Efficiency Factor MEF")
 plt.title("Mach efficiency Factor VS Mach Number")
 plt.grid(True)
+plt.show()
 
 
 

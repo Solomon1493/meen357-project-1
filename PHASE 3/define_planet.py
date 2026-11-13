@@ -7,6 +7,7 @@
 
 import numpy as np
 
+
 def define_planet():
 
     high_altitude = {'temperature' : lambda altitude: -23.4 - 0.00222*altitude, # [C]
